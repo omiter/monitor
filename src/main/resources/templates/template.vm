@@ -1,0 +1,22 @@
+<html>
+<body>
+    <table border="1px" style="border: solid black 1px">
+        <tr>
+            <td>Application</td>
+            <td>${app}</td>
+        </tr>
+        <tr>
+            <td>Host</td>
+            <td>${host}</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>${type}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>${status}</td>
+        </tr>
+    </table>
+</body>
+</html>
