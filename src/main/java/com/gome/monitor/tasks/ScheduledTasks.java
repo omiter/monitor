@@ -5,17 +5,20 @@ import com.gome.monitor.service.EmailService;
 import com.gome.monitor.util.DateNewUtils;
 import com.gome.monitor.util.ShellUtils;
 import com.trilead.ssh2.Connection;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
 @EnableScheduling
 @Component
+@Slf4j
 public class ScheduledTasks {
 
     @Autowired
@@ -36,11 +39,14 @@ public class ScheduledTasks {
             List<String> ignoreList = Arrays.asList(propConfig.getIgnoreStatus().toUpperCase().replaceAll(" ", "").split(","));
 
             for (String info : list) {
+                log.debug(info);
                 String[] split = info.split(",");
                 String[] split1 = split[3].split(" ");
 
                 String key = split[0] + ":" + split[1] + ":" + split[2];
-                if (!ignoreList.contains(split1[1].trim().toUpperCase())) {
+                String[] status = split1[1].toUpperCase().split(":::");
+                if (!CollectionUtils.containsAny(Arrays.asList(status),
+                        Arrays.asList(propConfig.getIgnoreStatus().replaceAll(" ","").toUpperCase().split(",")))) {
                     key = key + ":" + split1[1];
                     String value = stringRedisTemplate.opsForValue().get(key);
                     Map<String, Object> hashMap = new HashMap<>();
@@ -70,6 +76,7 @@ public class ScheduledTasks {
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -96,6 +103,7 @@ public class ScheduledTasks {
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 }
