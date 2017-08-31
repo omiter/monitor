@@ -1,5 +1,6 @@
 package com.gome.monitor;
 
+import com.gome.monitor.service.MysqlmonitorService;
 import com.gome.monitor.tasks.ScheduledTasks;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +14,20 @@ public class MonitorApplicationTests {
 
 	@Autowired
 	ScheduledTasks scheduledTasks;
-
+	@Autowired
+	MysqlmonitorService mysqlmonitorService;
 	@Test
 	public void contextLoads() {
 //		scheduledTasks.test2();
 	}
 
+	@Test
+	public void test(){
+		mysqlmonitorService.mysqlmonitorstate();
+	}
+
+	@Test
+	public void test2(){
+		mysqlmonitorService.mysqlmonitorlogs();
+	}
 }
