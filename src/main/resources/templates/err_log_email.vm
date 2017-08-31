@@ -1,0 +1,12 @@
+<html>
+<body>
+<h3>Application: ${app} ERROR!</h3>
+Host: ${host}  <br/>
+Type: ${type}  <br/>
+Error: <br/>
+  <#list infos as info>
+    &nbsp;&nbsp;&nbsp;&nbsp;  ${info} <br/>
+  </#list>
+
+</body>
+</html>

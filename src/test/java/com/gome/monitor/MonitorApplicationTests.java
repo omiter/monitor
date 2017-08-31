@@ -18,7 +18,7 @@ public class MonitorApplicationTests {
 	MysqlmonitorService mysqlmonitorService;
 	@Test
 	public void contextLoads() {
-		scheduledTasks.test();
+//		scheduledTasks.test2();
 	}
 
 	@Test
