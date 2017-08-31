@@ -21,7 +21,7 @@ public interface EmailService {
      * @param title  邮件标题
      * @param content 邮件内容
      */
-    public void sendModelMail(String sendTo, String title, Map<String, Object> content);
+    public void sendModelMail(String sendTo, String title, Map<String, Object> content,String model);
 
     /**
      * 发送简单邮件

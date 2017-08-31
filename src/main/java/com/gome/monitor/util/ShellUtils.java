@@ -1,9 +1,6 @@
 package com.gome.monitor.util;
 
-import com.trilead.ssh2.ChannelCondition;
-import com.trilead.ssh2.Connection;
-import com.trilead.ssh2.Session;
-import com.trilead.ssh2.StreamGobbler;
+import com.trilead.ssh2.*;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ShellUtils {
 
-    public static Connection conn = null;
+//    public static Connection conn = null;
     private static final long TIME_OUT = 1000 * 60 * 60 * 2;
 
     public static boolean isWin() {
@@ -56,13 +53,18 @@ public class ShellUtils {
         }
     }
 
-    public static boolean remoteLogin(String ip, String user, String pwd) throws IOException {
-        conn = new Connection(ip);
+    public static Connection remoteLogin(String ip, String user, String pwd) throws IOException {
+        Connection conn = new Connection(ip);
         conn.connect();
-        return conn.authenticateWithPassword(user, pwd);
+        if (conn.isAuthenticationComplete()||
+            conn.isAuthenticationPartialSuccess()||
+            conn.authenticateWithPassword(user, pwd)){
+            return conn;
+        }
+        return null;
     }
 
-    public static String[] remoteExec(String cmd) throws IOException, InterruptedException {
+    public static String[] remoteExec(String cmd,Connection conn) throws IOException, InterruptedException {
         String encoding = "UTF-8";
         if (isWin()) encoding = "GBK";
         Session session = conn.openSession();
@@ -82,7 +84,7 @@ public class ShellUtils {
 
     private static String processStream(InputStream in, String charset) throws IOException {
         @Cleanup BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
-        String line;
+        String line="";
         StringBuilder sb = new StringBuilder();
         while ((line = reader.readLine()) != null) {
             sb.append(line).append("\n");

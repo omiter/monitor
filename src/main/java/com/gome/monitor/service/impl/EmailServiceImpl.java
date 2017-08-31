@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendModelMail(String sendTo, String title, Map<String, Object> content) {
+    public void sendModelMail(String sendTo, String title, Map<String, Object> content,String model) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
@@ -49,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(emailConfig.getEmailFrom());
             helper.setTo(sendTo);
             helper.setSubject(title);
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate("template.vm","UTF-8"), content);
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate(model,"UTF-8"), content);
             helper.setText(text, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(sendTo);
             helper.setSubject(title);
 
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate("template.vm","UTF-8"), content);
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate("process_email.vm","UTF-8"), content);
             helper.setText(text, true);
 
             for (Pair<String, File> pair : attachments) {

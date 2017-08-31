@@ -16,7 +16,7 @@ public class MonitorApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		scheduledTasks.test();
+//		scheduledTasks.test2();
 	}
 
 }
