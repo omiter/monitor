@@ -1,5 +1,8 @@
 package com.gome.monitor.service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by lujiali on 2017/8/31.
  */
@@ -13,5 +16,5 @@ public interface MysqlmonitorService {
     /**
      * 监控主数据
      */
-    public void mysqlmonitorlogs();
+    public List<Map<String, Object>> mysqlmonitorlogs();
 }

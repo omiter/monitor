@@ -1,6 +1,7 @@
 package com.gome.monitor.tasks;
 
 import com.gome.monitor.service.EmailService;
+import com.gome.monitor.service.MysqlmonitorService;
 import com.gome.monitor.util.ShellUtils;
 import com.trilead.ssh2.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class ScheduledTasks {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    MysqlmonitorService mysqlmonitorService;
 
     @Scheduled(cron = "0 * * * * *")
     public void appMonitor() {
@@ -79,6 +83,30 @@ public class ScheduledTasks {
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public void checkmysqlstate(){
+        mysqlmonitorService.mysqlmonitorstate();
+    }
+    //@Scheduled(cron = "0 0 8-22/ * * *")
+    public void checkmaindata(){
+        String maindata = stringRedisTemplate.opsForValue().get("主数据").toString();
+        String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
+        String salehydata = stringRedisTemplate.opsForValue().get("销售单会员数据").toString();
+        System.out.println("主数据 "+maindata+" 历史销售记录测试"+histroysaledata+" 销售单会员数据"+salehydata);
+        List<Map<String, Object>> mysqlmonitorlogs = mysqlmonitorService.mysqlmonitorlogs();
+        for(int i=0;i<mysqlmonitorlogs.size();i++){
+            String name = mysqlmonitorlogs.get(i).get("name").toString();
+            String amount = mysqlmonitorlogs.get(i).get("amount").toString();
+            if(i==0 && amount.equals(salehydata)){
+                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+            }else if(i==1 && amount.equals(maindata)){
+                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+            }else if(i==2 && amount.equals(histroysaledata)){
+                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+            }
+            stringRedisTemplate.opsForValue().getAndSet(name, amount);
+
         }
     }
 }

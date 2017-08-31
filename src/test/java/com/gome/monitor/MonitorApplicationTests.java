@@ -28,6 +28,6 @@ public class MonitorApplicationTests {
 
 	@Test
 	public void test2(){
-		mysqlmonitorService.mysqlmonitorlogs();
+		scheduledTasks.checkmaindata();
 	}
 }

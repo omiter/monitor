@@ -39,16 +39,10 @@ public class MysqlmonitorServiceImpl implements MysqlmonitorService{
     }
 
     @Override
-    public void mysqlmonitorlogs() {
+    public List<Map<String, Object>> mysqlmonitorlogs() {
         String sql="SELECT * FROM conf_domains";
 
         List<Map<String, Object>> querymaindata = mysqldataQueryDao.Querymaindata(sql);
-        for(Map<String, Object> meta:querymaindata){
-            String name = meta.get("name").toString();
-            String amount = meta.get("amount").toString();
-            System.out.println(name+amount);
-
-        }
-
+        return querymaindata;
     }
 }
