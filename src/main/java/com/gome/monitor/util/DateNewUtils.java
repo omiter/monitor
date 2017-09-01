@@ -18,12 +18,13 @@ public class DateNewUtils {
     public static final DateTimeFormatter yyyy_MM_dd_HH_mm_ss = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static final long ONE_MIN = 1000 * 60;
+    public static final long HALF_HOUR = 1000 * 60 * 30;
     public static final long ONE_HOUR = 1000 * 60 * 60;
     public static final long ONE_DAY = 1000 * 60 * 60 * 24;
     public static final long ONE_MONTH = 1000 * 60 * 60 * 24 * 30;
     public static final long ONE_YEAR = 1000 * 60 * 60 * 24 * 30 * 365;
 
-    public static final List<Long> timeList = Arrays.asList(ONE_MIN,ONE_HOUR,ONE_DAY,ONE_MONTH,ONE_YEAR);
+    public static final List<Long> timeList = Arrays.asList(ONE_MIN,HALF_HOUR,ONE_HOUR,ONE_DAY,ONE_MONTH,ONE_YEAR);
 
     public static String getToday() {
         LocalDate today = LocalDate.now();

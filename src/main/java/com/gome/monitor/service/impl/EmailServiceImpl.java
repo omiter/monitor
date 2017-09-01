@@ -6,7 +6,7 @@ import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
@@ -25,69 +25,71 @@ public class EmailServiceImpl implements EmailService {
     EmailConfig emailConfig;
 
     @Autowired
-    JavaMailSender javaMailSender;
+    JavaMailSenderImpl sender;
 
     @Autowired
     FreeMarkerConfigurationFactory factory;
+    
 
     @Override
     public void sendSimpleMail(String sendTo, String title, String content) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom(emailConfig.getEmailFrom());
-        mail.setTo(sendTo);
+        mail.setTo(sendTo.split(","));
         mail.setSubject(title);
         mail.setText(content);
-        javaMailSender.send(mail);
+        
+        sender.send(mail);
     }
 
     @Override
-    public void sendModelMail(String sendTo, String title, Map<String, Object> content,String model) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+    public void sendModelMail(String sendTo, String title, Map<String, Object> content, String model) {
+        MimeMessage mimeMessage = sender.createMimeMessage();
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setFrom(emailConfig.getEmailFrom());
-            helper.setTo(sendTo);
+            helper.setTo(sendTo.split(","));
             helper.setSubject(title);
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate(model,"UTF-8"), content);
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate(model, "UTF-8"), content);
             helper.setText(text, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        javaMailSender.send(mimeMessage);
+        
+        sender.send(mimeMessage);
     }
 
     @Override
     public void sendAttachmentsMail(String sendTo, String title, String content, List<Pair<String, File>> attachments) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessage mimeMessage = sender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setFrom(emailConfig.getEmailFrom());
-            helper.setTo(sendTo);
+            helper.setTo(sendTo.split(","));
             helper.setSubject(title);
             helper.setText(content);
-            for (Pair<String, File> pair:attachments){
-                helper.addAttachment(pair.getKey(),new FileSystemResource(pair.getValue()));
+            for (Pair<String, File> pair : attachments) {
+                helper.addAttachment(pair.getKey(), new FileSystemResource(pair.getValue()));
             }
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-
-        javaMailSender.send(mimeMessage);
+        
+        sender.send(mimeMessage);
     }
 
     @Override
     public void sendTemplateMail(String sendTo, String title, Map<String, Object> content, List<Pair<String, File>> attachments) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessage mimeMessage = sender.createMimeMessage();
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setFrom(emailConfig.getEmailFrom());
-            helper.setTo(sendTo);
+            helper.setTo(sendTo.split(","));
             helper.setSubject(title);
 
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate("process_email.vm","UTF-8"), content);
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate("process_email.vm", "UTF-8"), content);
             helper.setText(text, true);
 
             for (Pair<String, File> pair : attachments) {
@@ -96,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        javaMailSender.send(mimeMessage);
+        
+        sender.send(mimeMessage);
     }
 }
