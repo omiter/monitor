@@ -1,5 +1,6 @@
 package com.gome.monitor.tasks;
 
+import com.gome.monitor.component.PropConfig;
 import com.gome.monitor.service.EmailService;
 import com.gome.monitor.service.MysqlmonitorService;
 import com.gome.monitor.util.DateNewUtils;
@@ -29,6 +30,9 @@ public class ScheduledTasks {
 
     @Autowired
     PropConfig propConfig;
+
+    @Autowired
+    MysqlmonitorService mysqlmonitorService;
 
     @Scheduled(cron = "0 * * * * *")
     public void appMonitor() {
