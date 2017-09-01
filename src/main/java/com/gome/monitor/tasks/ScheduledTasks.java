@@ -112,12 +112,12 @@ public class ScheduledTasks {
     public void checkmysqlstate(){
         mysqlmonitorService.mysqlmonitorstate();
     }
-    //@Scheduled(cron = "0 0 8-22/ * * *")
+    @Scheduled(cron = "0 0 8-20 * * *")
     public void checkmaindata(){
         String maindata = stringRedisTemplate.opsForValue().get("主数据").toString();
         String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
         String salehydata = stringRedisTemplate.opsForValue().get("销售单会员数据").toString();
-        System.out.println("主数据 "+maindata+" 历史销售记录测试"+histroysaledata+" 销售单会员数据"+salehydata);
+        log.info("主数据 "+maindata+" 历史销售记录测试"+histroysaledata+" 销售单会员数据"+salehydata);
         List<Map<String, Object>> mysqlmonitorlogs = mysqlmonitorService.mysqlmonitorlogs();
         for(int i=0;i<mysqlmonitorlogs.size();i++){
             String name = mysqlmonitorlogs.get(i).get("name").toString();
