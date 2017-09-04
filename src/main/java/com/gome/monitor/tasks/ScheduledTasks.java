@@ -123,11 +123,11 @@ public class ScheduledTasks {
             String name = mysqlmonitorlogs.get(i).get("name").toString();
             String amount = mysqlmonitorlogs.get(i).get("amount").toString();
             if(i==0 && amount.equals(salehydata)){
-                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+                emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变","主数据未发生改变");
             }else if(i==1 && amount.equals(maindata)){
-                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+                emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变","主数据未发生改变");
             }else if(i==2 && amount.equals(histroysaledata)){
-                emailService.sendSimpleMail("253503945@qq.com","主数据未发生改变","主数据未发生改变");
+                emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变","主数据未发生改变");
             }
             stringRedisTemplate.opsForValue().getAndSet(name, amount);
 
