@@ -117,9 +117,9 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 10-20/2 * * *")
     public void checkmaindata(){
         String maindata = stringRedisTemplate.opsForValue().get("主数据").toString();
-        String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
+        //String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
         String salehydata = stringRedisTemplate.opsForValue().get("销售单会员数据").toString();
-        log.info("主数据 "+maindata+" 历史销售记录测试"+histroysaledata+" 销售单会员数据"+salehydata);
+        log.info("主数据 "+maindata+" "+""+" 销售单会员数据"+salehydata);
         List<Map<String, Object>> mysqlmonitorlogs = mysqlmonitorService.mysqlmonitorlogs();
         for(int i=0;i<mysqlmonitorlogs.size();i++){
             String name = mysqlmonitorlogs.get(i).get("name").toString();
@@ -128,8 +128,6 @@ public class ScheduledTasks {
                 emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变"," 销售单会员数据未发生改变");
             }else if(i==1 && amount.equals(maindata)){
                 emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变","主数据未发生改变");
-            }else if(i==2 && amount.equals(histroysaledata)){
-                emailService.sendSimpleMail(propConfig.getMailTo(),"主数据未发生改变","历史销售记录测试未发生改变");
             }
             stringRedisTemplate.opsForValue().getAndSet(name, amount);
 
