@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 
 ssh root@$1 << EOF

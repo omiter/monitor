@@ -1,5 +1,6 @@
 package com.gome.monitor.service.impl;
 
+import com.gome.monitor.component.PropConfig;
 import com.gome.monitor.dao.MysqldataQueryDao;
 import com.gome.monitor.service.MysqlmonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ public class MysqlmonitorServiceImpl implements MysqlmonitorService{
     MysqldataQueryDao mysqldataQueryDao;
     @Autowired
     EmailServiceImpl emailServiceimpl;
+
+    @Autowired
+    PropConfig propConfig;
+
     @Override
     public void mysqlmonitorstate() {
         String sql="select job_id,project_name,module_name,job_name,batch_begin_time,last_exec_time,job_status from meta_dataflow.jobs";
@@ -33,7 +38,7 @@ public class MysqlmonitorServiceImpl implements MysqlmonitorService{
                 String last_exec_time = meta.get("last_exec_time").toString();
                 String contant="第"+job_id+"任务报错，project_name："+project_name+"   module_name："+module_name+"   job_name："+job_name
                         +"   batch_begin_time："+batch_begin_time+"   last_exec_time："+last_exec_time;
-                emailServiceimpl.sendSimpleMail("253503945@qq.com","任务流程表报错",contant);
+                emailServiceimpl.sendSimpleMail(propConfig.getMailTo(),"任务流程表报错",contant);
             }
         }
     }

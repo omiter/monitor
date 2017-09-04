@@ -109,10 +109,12 @@ public class ScheduledTasks {
             log.error(e.getMessage());
         }
     }
+
+    @Scheduled(cron = "0 0 8 * * * ")
     public void checkmysqlstate(){
         mysqlmonitorService.mysqlmonitorstate();
     }
-    @Scheduled(cron = "0 0 8-20 * * *")
+    @Scheduled(cron = "0 0 10-20 * * *")
     public void checkmaindata(){
         String maindata = stringRedisTemplate.opsForValue().get("主数据").toString();
         String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
