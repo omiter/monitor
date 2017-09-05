@@ -63,7 +63,9 @@ public class DateNewUtils {
     public static String getDateTime(String patten) {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern(patten));
     }
-
+    public static LocalDateTime getLocalDateTime(String patten,String date) {
+        return LocalDateTime.parse(date,DateTimeFormatter.ofPattern(patten));
+    }
 
     public static String getTodayToCurrentInterval() {
         String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00.000'Z'"));
