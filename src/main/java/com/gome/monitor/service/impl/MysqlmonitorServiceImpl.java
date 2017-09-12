@@ -25,7 +25,8 @@ public class MysqlmonitorServiceImpl implements MysqlmonitorService{
 
     @Override
     public void mysqlmonitorstate() {
-        String sql="select job_id,project_name,module_name,job_name,batch_begin_time,last_exec_time,job_status from meta_dataflow.jobs";
+        String sql="select job_id,a.project_name as project_name,module_name,job_name,batch_begin_time,last_exec_time,job_status , mail_to from jobs a LEFT JOIN jobs_mail t on " +
+                "a.project_name=t.project_name";
         List<Map<String, Object>> querydata = mysqldataQueryDao.Querydata(sql);
         for(Map<String, Object> meta:querydata){
             String job_status = meta.get("job_status").toString();
@@ -38,7 +39,11 @@ public class MysqlmonitorServiceImpl implements MysqlmonitorService{
                 String last_exec_time = meta.get("last_exec_time").toString();
                 String contant="第"+job_id+"任务报错，project_name："+project_name+"   module_name："+module_name+"   job_name："+job_name
                         +"   batch_begin_time："+batch_begin_time+"   last_exec_time："+last_exec_time;
-                emailServiceimpl.sendSimpleMail(propConfig.getMailTo(),"任务流程表报错",contant);
+               if(meta.get("mail_to")!=null){
+                   emailServiceimpl.sendSimpleMail(meta.get("mail_to").toString(),"任务流程表报错",contant);
+               }else {
+                   emailServiceimpl.sendSimpleMail(propConfig.getMailTo(),"任务流程表报错",contant);
+               }
             }
         }
     }
