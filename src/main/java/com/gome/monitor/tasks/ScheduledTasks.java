@@ -44,7 +44,7 @@ public class ScheduledTasks {
 
             for (String info : list) {
                 log.debug(info);
-                String[] split = info.split(",");
+                String[] split = info.split("===");
                 String[] split1 = split[3].split(" ");
 
                 String key = split[0] + ":" + split[1] + ":" + split[2];
@@ -91,7 +91,7 @@ public class ScheduledTasks {
             List<String> list = Arrays.asList(pwd[1].split("\\n"));
 
             for (String info : list) {
-                String[] split = info.split(",");
+                String[] split = info.split("===");
                 if (!"0".equals(split[3].trim())) {
                     List<String> infos = Arrays.asList(split[3].split(":::"));
                     Map<String, Object> hashMap = new HashMap<>();
