@@ -51,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(emailConfig.getEmailFrom());
             helper.setTo(sendTo.split(","));
             helper.setSubject(title);
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate(model, "UTF-8"), content);
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(factory.createConfiguration().getTemplate(model, "gbk"), content);
             helper.setText(text, true);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,74 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        body{color:#000000;font-family:"Tahoma","宋体","Sans Serif","Arial","Verdana","sans-serif";font-size:12px;}
+        .mainTable{padding:0px;border:1px solid #000000;border-collapse :collapse;text-align:left;word-break:break-all;}
+        td{ border:1px solid #C2C2C2;font-size: 10pt;}
+        .tdc{border:0px}
+        .info{text-align:left;font-size:15px;font-weight:bold;color:#ff0000}
+        .content{width:600px;margin-left:auto;margin-right:auto;border-width:1px;}
+        .title{font-family:"Times New Roman";}
+        a{text-decoration:none;}</style>
+</head>
+<body>
+<div class="content">
+    <table class="mainTable" width="100%">
+        <tbody>
+        <tr>
+            <td colspan="2" width="100%"><h3 class="title">${mail_subject}</h3></td>
+        </tr>
+
+
+        <tr>
+            <td colspan="2">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0"
+                       style="background-color: #14B9D5;">
+                    <tr>
+                        <td style="padding: 4.5pt 45pt 4.5pt 4.5pt;">
+                            <div align="center" style="text-align: center; margin: 0;">
+                                <font face="宋体" size="3"><span style="font-size: 12pt;"><font
+                                        face="微软雅黑,sans-serif" color="white"><b>基本信息</b></font></span></font>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>任务id</td>
+            <td>${ID}</td>
+        </tr>
+        <tr>
+            <td>项目名称</td>
+            <td>${project_name}</td>
+        </tr>
+        <tr>
+            <td>模块名称</td>
+            <td class="info">${module_name}</td>
+        </tr>
+        <tr>
+            <td>任务名称</td>
+            <td>${job_name}</td>
+        </tr>
+        <tr>
+            <td>受影响数据时间</td>
+            <td>${batch_begin_time}</td>
+        </tr>
+        <tr>
+            <td>最新执行时间</td>
+            <td>${last_exec_time}</td>
+        </tr>
+        <tr>
+            <td>行动指南</td>
+            <td>${mail_comment}</td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+
+
+
