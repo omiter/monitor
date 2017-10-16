@@ -1,0 +1,34 @@
+<html>
+<body>
+<table border="1px" style="border: solid black 1px">
+    <tr>
+        <td>project</td>
+        <td>${project}</td>
+    </tr>
+    <tr>
+        <td>job</td>
+        <td>${job}</td>
+    </tr>
+    <tr>
+        <td>Host</td>
+        <td>${host}</td>
+    </tr>
+    <tr>
+        <td>path</td>
+        <td>${path}</td>
+    </tr>
+    <tr>
+        <td>time</td>
+        <td>${time}</td>
+    </tr>
+    <tr>
+        <td>count</td>
+        <td>${count}</td>
+    </tr>
+    <tr>
+        <td>job_date</td>
+        <td>${job_date}</td>
+    </tr>
+</table>
+</body>
+</html>

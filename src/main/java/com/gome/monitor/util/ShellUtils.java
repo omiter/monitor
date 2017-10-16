@@ -1,6 +1,10 @@
 package com.gome.monitor.util;
 
-import com.trilead.ssh2.*;
+import com.gome.monitor.bean.ShellBean;
+import com.trilead.ssh2.ChannelCondition;
+import com.trilead.ssh2.Connection;
+import com.trilead.ssh2.Session;
+import com.trilead.ssh2.StreamGobbler;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class ShellUtils {
 
 //    public static Connection conn = null;
-    private static final long TIME_OUT = 1000 * 60 * 60 * 2;
+    private static final long TIME_OUT = 1000 * 30;
 
     public static boolean isWin() {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -64,22 +68,21 @@ public class ShellUtils {
         return null;
     }
 
-    public static String[] remoteExec(String cmd,Connection conn) throws IOException, InterruptedException {
+
+    public static ShellBean remoteExec(ShellBean bean, Session session) throws IOException, InterruptedException {
         String encoding = "UTF-8";
         if (isWin()) encoding = "GBK";
-        Session session = conn.openSession();
-        session.execCommand(cmd);
+        session.execCommand(bean.getCommand());
         @Cleanup InputStream stdout = new StreamGobbler(session.getStdout());
         @Cleanup InputStream stderr = new StreamGobbler(session.getStderr());
         String out = processStream(stdout, encoding);
         String err = processStream(stderr, encoding);
         session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
         Integer status = session.getExitStatus();
-        if (status == 0) {
-            return new String[]{status + "", out};
-        } else {
-            return new String[]{status + "", err};
-        }
+        bean.setStatus(status);
+        bean.setOut(out);
+        bean.setError(err);
+        return bean;
     }
 
     private static String processStream(InputStream in, String charset) throws IOException {
