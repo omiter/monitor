@@ -90,7 +90,7 @@ public class ScheduledTasks {
                     for (String info : list) {
                         log.debug(info);
                         String[] split = info.split("===");
-                        String[] split1 = split[3].split(" ");
+                        String[] split1 = split[3].split(",");
 
                         String key = split[0] + ":" + split[1] + ":" + split[2];
                         String[] status = split1[1].toUpperCase().split(":::");
@@ -164,9 +164,9 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0 10-20/2 * * *")
     public void checkmaindata() {
-        String maindata = stringRedisTemplate.opsForValue().get("主数据").toString();
+        String maindata = stringRedisTemplate.opsForValue().get("主数据");
         //String histroysaledata = stringRedisTemplate.opsForValue().get("历史销售记录测试").toString();
-        String salehydata = stringRedisTemplate.opsForValue().get("销售单会员数据").toString();
+        String salehydata = stringRedisTemplate.opsForValue().get("销售单会员数据");
         log.info("主数据 " + maindata + " " + "" + " 销售单会员数据" + salehydata);
         List<Map<String, Object>> mysqlmonitorlogs = mysqlmonitorService.mysqlmonitorlogs();
         for (int i = 0; i < mysqlmonitorlogs.size(); i++) {

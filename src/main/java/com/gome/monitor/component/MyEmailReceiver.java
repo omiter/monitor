@@ -31,8 +31,8 @@ public class MyEmailReceiver extends Pop3MailReceiver {
                 } catch (MessagingException e) {
                     e.printStackTrace();
                 }
-                assert d1 != null;
-                assert d2 != null;
+                if (d1 == null || d2 ==null)
+                    return 0;
                 return Long.compare(d2.getTime(), d1.getTime());
             });
         }

@@ -4,8 +4,6 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DateNewUtils {
 
@@ -105,14 +103,14 @@ public class DateNewUtils {
         return dateTime.toLocalDateTime().format(yyyy_MM_dd_HH_mm_ss);
     }
 
-    public static void main(String[] args) {
-
-        String s ="From: =?gb2312?B?aHV0YW8ouvrMzi6088r9vt3R0L6/1Louyv2+3ca9zKiyvyk=?= <hutao@gomeplus.com><1183008058@qq.com>";
-        Pattern p = Pattern.compile("<(.*?)>");
-        Matcher m = p.matcher(s);
-        while (m.find()){
-            String group = m.group(1);
-            System.out.println(group);
-        }
-    }
+//    public static void main(String[] args) {
+//
+//        String s ="From: =?gb2312?B?aHV0YW8ouvrMzi6088r9vt3R0L6/1Louyv2+3ca9zKiyvyk=?= <hutao@gomeplus.com><1183008058@qq.com>";
+//        Pattern p = Pattern.compile("<(.*?)>");
+//        Matcher m = p.matcher(s);
+//        while (m.find()){
+//            String group = m.group(1);
+//            System.out.println(group);
+//        }
+//    }
 }
