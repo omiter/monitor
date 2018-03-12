@@ -1,18 +1,21 @@
 #!/bin/bash
 DIR=`cd  $(dirname $0)&& cd .. && pwd`
 source ${DIR}/bin/config.sh
+source /etc/profile
+export EXEC_FILE=${EXEC_FILE//  / }
 export EXEC_FILE=${EXEC_FILE//  / }
 # get program pid
 function pid(){
+ P=`echo $PARAM|sed 's/-D//'`
  case ${PRO_TYPE} in
      ${PRO_BASH})
          PID=`ps -ef |grep "${BIN}/${EXEC_FILE}"|grep -v grep|awk '{print $2" "$3}'`
          ;;
      ${PRO_SPARK})
-         PID=`ps -ef |grep "${LIB}/${EXEC_FILE}"|grep "$PARAM"|grep -v grep|awk '{print $2" "$3}'`
+         PID=`ps -ef |grep "${LIB}/${EXEC_FILE}"|grep "$P"|grep -v grep|awk '{print $2" "$3}'`
          ;;
      ${PRO_JAVA})
-         PID=`ps -ef |grep "${LIB}/${EXEC_FILE}"|grep "$PARAM"|grep -v grep|awk '{print $2" "$3}'`
+         PID=`ps -ef |grep "${LIB}/${EXEC_FILE}"|grep "$P"|grep -v grep|awk '{print $2" "$3}'`
          ;;
      *)
          echo "${PRO_TYPE} type program is not support get PID!"
@@ -30,10 +33,18 @@ function pid(){
 # get spark applicationId
 function appid(){
   if [ "${PRO_SPARK}" = ${PRO_TYPE} ];then
-     APPID=`grep "state:"  ${LOGS}/${LOG_NAME}.log |sed -n "1p"|awk '{print $8}'`
+    APPID=`grep "state:"  ${LOGS}/${LOG_NAME}.log |sed -n "1p"|awk '{print $8}'`
+    if [ -z "$APPID" ];then
+       APPID=`grep "state:"  ${LOGS}/${LOG_NAME}_ERR.log |sed -n "1p"|awk '{print $8}'`
+    fi
   else
      echo "$PRO_TYPE is not support get applicationId!"
      APPID=""
+  fi
+  if [[ -z "$APPID" && "${PRO_SPARK}" = ${PRO_TYPE}  ]];then
+     APPID=`cat $LOGS/appid.aid`
+  else
+     echo $APPID > $LOGS/appid.aid
   fi
   echo ${APPID}
 }
@@ -48,8 +59,8 @@ function start_model(){
      echo "exec end..."
      exit
   else
-     echo "nohup $COMMAND 1>$LOGFILE 2>$ERR_LOGFILE &"
-     nohup $COMMAND 1>$LOGFILE 2>$ERR_LOGFILE &
+     echo "nohup $COMMAND 1>>$LOGFILE 2>>$ERR_LOGFILE &"
+     nohup $COMMAND 1>>$LOGFILE 2>>$ERR_LOGFILE &
   fi
 }
 
@@ -74,7 +85,7 @@ function start(){
        ${PRO_SPARK})
           RUN="${EXEC} $MASTER $DRIVER_MEM $NUM_EXE $EX_MEM $SPARK_CONF $CLASS $LIB/$EXEC_FILE $PARAM"
           > ${LOGS}/${LOG_NAME}.log
-          start_model "${RUN}" "${LOGS}/${LOG_NAME}.log" "${LOGS}/${LOG_NAME}_ERR.log"
+          start_model "${RUN}" "${LOGS}/${LOG_NAME}.log" "${LOGS}/${LOG_NAME}.log"
           ;;
         *)
           echo "$PRO_TYPE program is not support server.sh start!"
@@ -91,23 +102,25 @@ function start(){
 }
 
 function killparent(){
+  echo "kill param: $KILL"
   if [[ "$BATCH_LOG_CONSOLE" = 0 && "$JOB_TYPE" = $JOB_BATCH ]];then
     local PID=`pid parent`
      if [ "$PID" != "1"  ];then
-        kill -9 $PID
+        kill $KILL $PID
      else
         echo "PID=$PID cannot be killed!"
      fi    
-     kill -9 "$1"
+     kill $KILL "$1"
   else
     local PID="$1"
-    kill -9 $PID
+    kill $KILL $PID
   fi
 }
 
 function stop(){
   PID=`pid`
   APPID=`appid`
+  rm -rf $LOGS/appid.aid
   case ${PRO_TYPE} in
    ${PRO_BASH})
       if [ -n "${PID}"  ]; then
@@ -193,7 +206,7 @@ case $1 in
   start)  start ;;
   stop)    stop ;;
   status)  status ;;
-  restart)  stop && start ;;
+  restart)  stop && sleep 2s && start ;;
   *)       echo "Usage: start|stop|restart|status";;
 esac
 

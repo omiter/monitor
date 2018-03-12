@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 ssh $3@$1 << EOF
   source /etc/profile;

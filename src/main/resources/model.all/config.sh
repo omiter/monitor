@@ -14,7 +14,11 @@ export BIN=${DIR}/bin
 export CONF=${DIR}/conf
 export LIB=${DIR}/lib
 export LOGS=${DIR}/logs
+# 0:离线任务日志同时打印到控制台和文件，且不后台运行（用于azkaban调度） 
+# 1:离线任务日志只打印到文件，后台运行
+export BATCH_LOG_CONSOLE=1
 
+export KILL=""
 
 #job type (cat constant.sh)
 export JOB_TYPE=

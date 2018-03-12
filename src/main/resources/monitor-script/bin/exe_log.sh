@@ -9,6 +9,9 @@ yesterday=`date -d "-1 days" +"%Y-%m-%d"`
 # log size limit 10M
 size_limit=10485760
 #size_limit=20000
+ERROR="ERROR|Exception:"
+GREPV="mail|INFO"
+LOG_NUM=9
 ssh $3@$1 << EOF
   source /etc/profile;
   i=0
@@ -21,13 +24,14 @@ ssh $3@$1 << EOF
     if [[ -n "\$exsit"  ]];then
        \$(log \$logfile.\${i})
     fi
-    if [[ \$i -gt 10  ]];then
-      cp /dev/null   \${logfile}.\${i}
+    if [[ \$i -gt $LOG_NUM  ]];then
+      rm -rf   \${logfile}.\${i}
+      return
     fi
     if [[ \$r = 0 ]];then
       cat \${logfile} > \${logfile}.\${i}
     else
-      cat \${logfile}.\${r} > \${logfile}.\${i}
+      mv \${logfile}.\${r}  \${logfile}.\${i}
     fi
     if [[ \$i -eq 1 ]];then
       cp /dev/null  \$logfile
@@ -40,7 +44,7 @@ ssh $3@$1 << EOF
   err1=""
   if [ \$num -gt 0 ];then
     cat \$log_dir >> $2/logs/\${log_name}_ERR_\${datetime}.log
-    err1=\$(awk BEGIN{RS=EOF}'{gsub(/\\n/,":::");print}' \$log_dir)
+    err1=\$(cat \$log_dir|egrep -v "$GREPV"|egrep  -A 50  "$ERROR" |awk BEGIN{RS=EOF}'{gsub(/\\n/,":::");print}')
     >\$log_dir
   fi
   rownum=\$(cat $2/logs/rownum)
@@ -49,7 +53,7 @@ ssh $3@$1 << EOF
     rownum=0
     count=0
   fi
-  err2=\$(awk -F, 'NR>'\$rownum'' $2/logs/\${log_name}.log |grep -A 50  ERROR|awk BEGIN{RS=EOF}'{gsub(/\\n/,":::");print}')
+  err2=\$(awk -F, 'NR>'\$rownum'' $2/logs/\${log_name}.log |egrep -v "$GREPV"|egrep  -A 50  "$ERROR"|awk BEGIN{RS=EOF}'{gsub(/\\n/,":::");print}')
    \$(echo \$count > $2/logs/rownum)
   
   size=\$(ls -l $2/logs/\${log_name}.log|awk '{print \$5}')
