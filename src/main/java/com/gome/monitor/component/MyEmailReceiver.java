@@ -1,5 +1,6 @@
 package com.gome.monitor.component;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.mail.Pop3MailReceiver;
 
 import javax.mail.Message;
@@ -7,6 +8,7 @@ import javax.mail.MessagingException;
 import java.util.Arrays;
 import java.util.Date;
 
+@Slf4j
 public class MyEmailReceiver extends Pop3MailReceiver {
 
     public MyEmailReceiver(String host, String username, String password) {
@@ -16,6 +18,7 @@ public class MyEmailReceiver extends Pop3MailReceiver {
 
     @Override
     protected Message[] searchForNewMessages() throws MessagingException {
+        log.info("search start");
         int messageCount = this.getFolder().getMessageCount();
         if (messageCount == 0) {
             return new Message[0];
@@ -36,6 +39,7 @@ public class MyEmailReceiver extends Pop3MailReceiver {
                 return Long.compare(d2.getTime(), d1.getTime());
             });
         }
+        log.info("search end!");
         return messages;
     }
 

@@ -8,7 +8,6 @@ import com.gome.monitor.service.EmailService;
 import com.gome.monitor.service.MonitorCountService;
 import com.gome.monitor.service.MysqlmonitorService;
 import com.gome.monitor.util.DateNewUtils;
-import com.gome.monitor.util.RexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.mail.internet.MimeMessage;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @EnableScheduling
@@ -61,13 +55,19 @@ public class ScheduledTasks {
             int index = Integer.valueOf(r[0]);
             long old = Long.valueOf(r[1]);
             long curr = DateNewUtils.getTime();
-            if (curr - old < DateNewUtils.timeList.get(index)) return false;
+            Long time = 0L;
+            if (index > DateNewUtils.timeList.size() -1){
+                time = DateNewUtils.ONE_HOUR;
+            }else {
+                time = DateNewUtils.timeList.get(index);
+            }
+            if (curr - old < time) return false;
             stringRedisTemplate.opsForValue().set(key, 3 + "_" + curr);
         }
         return true;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "30 * * * * *")
     public void appMonitor() {
         try {
 //            Connection conn = ShellUtils.remoteLogin(propConfig.getShellHost(), propConfig.getShellUser(), propConfig.getShellPwd());
@@ -86,6 +86,7 @@ public class ScheduledTasks {
                     if (!isSendAble(key)) continue;
                     emailService.sendModelMail(propConfig.getMailTo(), "Process monitor: " + states[3], hashMap, "monitor_email.vm");
                 } else {
+                    if (states.length < 2) continue;
                     List<String> list = Arrays.asList(states[1].split("~~~"));
                     for (String info : list) {
                         log.debug(info);
@@ -112,6 +113,7 @@ public class ScheduledTasks {
                         }
                     }
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,6 +138,7 @@ public class ScheduledTasks {
                     if (!isSendAble(key)) continue;
                     emailService.sendModelMail(propConfig.getMailTo(), "Process monitor: " + states[3], hashMap, "monitor_email.vm");
                 } else {
+                    if (states.length < 2) continue;
                     List<String> list = Arrays.asList(states[1].split("~~~"));
                     for (String info : list) {
                         String[] split = info.split("===");
@@ -189,49 +192,49 @@ public class ScheduledTasks {
         monitorCountService.monitorCount();
     }
 
-
-    @Scheduled(cron = "0 * * * * *")
-    public void EmailReceiver() {
-        LocalDateTime now = LocalDateTime.now();
-
-        try {
-            Object[] receive = receiver.receive();
-            for (Object o : receive) {
-                MimeMessage message = (MimeMessage) o;
-                LocalDateTime dateTime = ZonedDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()).toLocalDateTime();
-                String subject = message.getSubject();
-                if (DateNewUtils.isContains(dateTime, now, -1, ChronoUnit.MINUTES)
-                        && subject.trim().startsWith("exec:")) {
-                    //部分命令不允许执行
-                    if (StringUtils.containsAny(subject, "reboot", "init", "shutdown", "halt", "poweroff", "passwd", "test")) {
-                        emailService.sendSimpleMail(propConfig.getMailTo(), "command could not exec!", subject);
-                        return;
-                    }
-
-                    String from = RexUtils.getContent(message.getHeader("From", "\n"), "<(.*?)>");
-                    if (!propConfig.getMailTo().contains(from.trim())){
-                        emailService.sendSimpleMail(propConfig.getMailTo(),"has no permission exec cmd!",from+" not in "+propConfig.getMailTo()+" \n"+ subject);
-                        return;
-                    }
-
-                    String[] split = subject.split(":")[1].split(",");
-                    ShellBean bean = null;
-                    log.info(from+" exec  '"+split[2]+"'  start...");
-                    if (split.length == 1) {
-                        bean = ShellBean.builder().command(split[0]).build();
-                        bean = shellConnection.exec(bean);
-                    } else {
-                        bean = ShellBean.builder().host(split[0].trim()).user(split[1].trim()).command(split[2].trim()).build();
-                        bean = shellConnection.exec(bean, true);
-                    }
-                    log.info(from+" exec end...");
-                    System.out.println(bean);
-                    emailService.sendSimpleMail(propConfig.getMailTo(), "command '" + split[2] + "' exec result:", from+" exec result:+\n "+bean.toString());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//
+//    @Scheduled(cron = "0 * * * * *")
+//    public void EmailReceiver() {
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        try {
+//            Object[] receive = receiver.receive();
+//            for (Object o : receive) {
+//                MimeMessage message = (MimeMessage) o;
+//                LocalDateTime dateTime = ZonedDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()).toLocalDateTime();
+//                String subject = message.getSubject();
+//                if (DateNewUtils.isContains(dateTime, now, -1, ChronoUnit.MINUTES)
+//                        && subject.trim().startsWith("exec:")) {
+//                    //部分命令不允许执行
+//                    if (StringUtils.containsAny(subject, "reboot", "init", "shutdown", "halt", "poweroff", "passwd", "test")) {
+//                        emailService.sendSimpleMail(propConfig.getMailTo(), "command could not exec!", subject);
+//                        return;
+//                    }
+//
+//                    String from = RexUtils.getContent(message.getHeader("From", "\n"), "<(.*?)>");
+//                    if (!propConfig.getMailTo().contains(from.trim())){
+//                        emailService.sendSimpleMail(propConfig.getMailTo(),"has no permission exec cmd!",from+" not in "+propConfig.getMailTo()+" \n"+ subject);
+//                        return;
+//                    }
+//
+//                    String[] split = subject.split(":")[1].split(",");
+//                    ShellBean bean = null;
+//                    log.info(from+" exec  '"+split[2]+"'  start...");
+//                    if (split.length == 1) {
+//                        bean = ShellBean.builder().command(split[0]).build();
+//                        bean = shellConnection.exec(bean);
+//                    } else {
+//                        bean = ShellBean.builder().host(split[0].trim()).user(split[1].trim()).command(split[2].trim()).build();
+//                        bean = shellConnection.exec(bean, true);
+//                    }
+//                    log.info(from+" exec end...");
+//                    System.out.println(bean);
+//                    emailService.sendSimpleMail(propConfig.getMailTo(), "command '" + split[2] + "' exec result:", from+" exec result:+\n "+bean.toString());
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }

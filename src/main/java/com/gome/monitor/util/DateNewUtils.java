@@ -25,7 +25,7 @@ public class DateNewUtils {
     public static final long ONE_MONTH = 1000 * 60 * 60 * 24 * 30;
     public static final long ONE_YEAR = 1000 * 60 * 60 * 24 * 30 * 365;
 
-    public static final List<Long> timeList = Arrays.asList(ONE_MIN,FIVE_MIN,TEN_MIN,HALF_HOUR,ONE_HOUR,ONE_DAY,ONE_MONTH,ONE_YEAR);
+    public static final List<Long> timeList = Arrays.asList(ONE_MIN,FIVE_MIN,TEN_MIN,HALF_HOUR,ONE_HOUR,ONE_HOUR,ONE_HOUR,ONE_HOUR);
 
     public static String getToday() {
         LocalDate today = LocalDate.now();

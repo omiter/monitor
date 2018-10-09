@@ -1,7 +1,9 @@
 package com.gome.monitor;
 
 import com.gome.monitor.component.MyEmailReceiver;
+import com.gome.monitor.component.PropConfig;
 import com.gome.monitor.component.ShellConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,10 @@ import java.util.Properties;
 
 @SpringBootApplication
 public class MonitorApplication {
+
+
+	@Autowired
+	PropConfig propConfig;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MonitorApplication.class, args);
@@ -30,6 +36,6 @@ public class MonitorApplication {
 
 	@Bean
 	public ShellConnection getConnection(){
-		return new ShellConnection("10.112.167.26","root","3edcXZAQ!");
+		return new ShellConnection(propConfig.getShellHost(),propConfig.getShellUser(),propConfig.getShellPwd());
 	}
 }

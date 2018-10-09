@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class EmailConfig {
-    @Value("${spring.mail.username}")
+    @Value("${spring.mail.properties.mail.from}")
     private String emailFrom;
 }

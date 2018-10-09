@@ -47,17 +47,16 @@ public class ShellConnection {
         return exec(bean);
     }
 
-    public ShellBean exec(ShellBean bean) throws IOException, InterruptedException {
-        Session session = null;
+    public ShellBean exec(ShellBean bean) {
         try {
-            session = getConnection().openSession();
+            Session session = getConnection().openSession();
+            bean = ShellUtils.remoteExec(bean, session);
+            session.close();
+            conn.close();
         }catch (Exception e){
             e.printStackTrace();
-            conn = ShellUtils.remoteLogin(host, user, pwd);
-            session = conn.openSession();
         }
-        bean = ShellUtils.remoteExec(bean, session);
-        session.close();
+
         return bean;
     }
 }
